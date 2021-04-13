@@ -1,0 +1,56 @@
+/* 
+*  CSS TABLE OF CONTENTS
+*   
+*  1.0 - Fonts
+*  2.0 - Reset
+*  3.0 - Globals
+*
+*/
+
+/******************** 1.0 - Fonts ********************/
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+
+/******************** 2.0 - Reset ********************/
+:root {
+  font-size: 62.5%;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+
+/******************** 3.0 - Globals ********************/
+body {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.5rem;
+  cursor: default;
+  color: #434345;
+}
+
+h1 {
+  font-size: 2.5em;
+}
+
+h2 {
+  font-size: 1.7em;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+h4 {
+  font-size: 1.4em;
+}
+
+p {
+  text-align: justify;
+  text-justify: inter-word;
+}
