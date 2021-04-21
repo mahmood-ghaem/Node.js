@@ -1,95 +1,27 @@
 const express = require('express');
+const exphbs = require('express-handlebars');
+
 const app = express();
-const fs = require('fs');
-const path = require('path');
+
+// handlebars middleware
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
+
+// body parser middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-// YOUR CODE GOES IN HERE
-app.post('/blogs', (req, res) => {
-  if (
-    typeof req.body.title === 'undefined' ||
-    typeof req.body.content === 'undefined'
-  ) {
-    res.status(400);
-    res.send('Invalid request');
-    return;
-  }
-  const title = req.body.title;
-  const content = req.body.content;
-  fs.writeFileSync(title, content);
-  res.status(201);
-  res.end('ok');
-});
+//homepage route
+app.get('/', (req, res) =>
+  res.render('index', {
+    title: 'Blog App',
+    content:
+      'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsum laudantium unde deleniti quisquam nostrum aliquid cumque molestiae quas modi doloribus eveniet aperiam similique minus adipisci nihil temporibus, rem non sit! Quae cum omnis modi nesciunt perspiciatis saepe commodi porro alias, quos quisquam sunt odio exercitationem nobis ab tempora corporis expedita ullam hic? Enim tempore omnis magnam et dolorem! Laborum laudantium nesciunt amet accusantium aliquid. Facere voluptatum sequi commodi, asperiores laborum cupiditate repellendus ratione neque, numquam magnam reprehenderit sed officiis blanditiis fuga atque iste dicta dolore ab vitae? Nulla magni voluptate natus labore soluta perferendis consequatur, repellendus possimus quidem autem accusantium.',
+  }),
+);
 
-app.put('/posts/:title', (req, res) => {
-  if (
-    typeof req.body.title === 'undefined' ||
-    typeof req.body.content === 'undefined'
-  ) {
-    res.status(400);
-    res.send('Invalid request');
-    return;
-  }
-  const title = req.params.title;
-  const content = req.body.content;
-  if (fs.existsSync(title)) {
-    fs.writeFileSync(title, content);
-    res.status(200);
-    res.end('ok');
-  } else {
-    res.status(404);
-    res.send('This blog does not exist!');
-  }
-});
+// Blogs api routes
+app.use('/api/blogs', require('./routes/api/blogs'));
 
-app.delete('/blogs/:title', (req, res) => {
-  if (fs.existsSync(req.params.title)) {
-    fs.unlinkSync(req.params.title);
-    res.status(200);
-    res.end('ok');
-  } else {
-    res.status(404);
-    res.send('This blog does not exist!');
-  }
-});
-
-app.get('/blogs/:title', (req, res) => {
-  const title = req.params.title;
-  if (fs.existsSync(title)) {
-    const post = fs.readFileSync(title);
-    res.status(200);
-    res.send(post);
-  } else {
-    res.status(404);
-    res.send('This blog does not exist!');
-  }
-});
-
-app.get('/blogs', (req, res) => {
-  const allFiles = [];
-  fs.readdir(__dirname, (err, files) => {
-    if (err) {
-      res.send('Something went wrong');
-    }
-    files.forEach((file) => {
-      if (!path.extname(file) && fs.statSync(file).isFile()) {
-        const blog = {
-          title: file,
-        };
-        allFiles.push(blog);
-      }
-    });
-    if (allFiles.length === 0) {
-      res.send("Sorry, There isn't any blog");
-      return;
-    }
-    res.send(allFiles);
-  });
-});
-
-app.all('*', (req, res) => {
-  res.status(404);
-  res.send('Blog not found');
-});
-
-app.listen(3000);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
