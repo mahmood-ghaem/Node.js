@@ -35,7 +35,6 @@ router.get('/:title', (req, res) => {
   if (fs.existsSync(path.join(blogsFolder, title))) {
     try {
       const data = fs.readFileSync(path.join(blogsFolder, title), 'utf8');
-      console.log('data: ', data);
       res.status(200);
       res.json(data);
     } catch (err) {
