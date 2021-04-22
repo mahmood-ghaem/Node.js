@@ -3,25 +3,28 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 
+const blogsFolder = path.join(__dirname, '..', '..', './blogs');
+
 // Gets all blogs
 router.get('/', (req, res) => {
   const allFiles = [];
-  fs.readdir(__dirname, (err, files) => {
+  fs.readdir(blogsFolder, (err, files) => {
     if (err) {
       res.send('Something went wrong');
     }
+    let counter = 0;
     files.forEach((file) => {
-      if (!path.extname(file) && fs.statSync(file).isFile()) {
-        const blog = {
-          title: file,
-        };
-        allFiles.push(blog);
-      }
+      const blog = {
+        id: counter++,
+        title: file,
+      };
+      allFiles.push(blog);
     });
     if (allFiles.length === 0) {
       res.send("Sorry, There isn't any blog");
       return;
     }
+
     res.send(allFiles);
   });
 });
@@ -29,10 +32,15 @@ router.get('/', (req, res) => {
 // Gets single blog
 router.get('/:title', (req, res) => {
   const title = req.params.title;
-  if (fs.existsSync(title)) {
-    const post = fs.readFileSync(title);
-    res.status(200);
-    res.send(post);
+  if (fs.existsSync(path.join(blogsFolder, title))) {
+    try {
+      const data = fs.readFileSync(path.join(blogsFolder, title), 'utf8');
+      console.log('data: ', data);
+      res.status(200);
+      res.json(data);
+    } catch (err) {
+      res.send('Can not read blog file!');
+    }
   } else {
     res.status(404);
     res.send('This blog does not exist!');
@@ -41,8 +49,9 @@ router.get('/:title', (req, res) => {
 
 // Delete blog
 router.delete('/:title', (req, res) => {
-  if (fs.existsSync(req.params.title)) {
-    fs.unlinkSync(req.params.title);
+  const title = req.params.title;
+  if (fs.existsSync(path.join(blogsFolder, title))) {
+    fs.unlinkSync(path.join(blogsFolder, title));
     res.status(200);
     res.end('ok');
   } else {
@@ -61,7 +70,7 @@ router.post('/', (req, res) => {
   }
   const title = req.body.title;
   const content = req.body.content;
-  fs.writeFileSync(title, content);
+  fs.writeFileSync(path.join(blogsFolder, title), content);
   res.status(201);
   res.end('ok');
 });
@@ -78,8 +87,8 @@ router.put('/:title', (req, res) => {
   }
   const title = req.params.title;
   const content = req.body.content;
-  if (fs.existsSync(title)) {
-    fs.writeFileSync(title, content);
+  if (fs.existsSync(path.join(blogsFolder, title))) {
+    fs.writeFileSync(path.join(blogsFolder, title), content);
     res.status(200);
     res.end('ok');
   } else {

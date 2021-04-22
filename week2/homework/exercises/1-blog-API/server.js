@@ -23,5 +23,5 @@ app.get('/', (req, res) =>
 // Blogs api routes
 app.use('/api/blogs', require('./routes/api/blogs'));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
