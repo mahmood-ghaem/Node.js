@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\views"
   ],
-  "SelectedNode": "\\server.js",
+  "SelectedNode": "\\views\\index.handlebars",
   "PreviewInSolutionExplorer": false
 }
